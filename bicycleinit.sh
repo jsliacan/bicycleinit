@@ -1,7 +1,12 @@
 #!/bin/bash
+# Arguments:
+# 1. Branch name (optional): The Git branch to check for updates.
+#    Defaults to 'main'.
+# 2. Server REST API URL (optional): The base URL for the server's
+#    REST API. Defaults to 'https://bicycledata.ochel.se:80'.
 
 #
-# Update the script - bicycleinit.sh
+# Update this script - bicycleinit.sh
 
 # Navigate to the directory where the script is located
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -9,6 +14,9 @@ cd "$SCRIPT_DIR"
 
 # Define the branch to check for updates (default to main)
 BRANCH=${1:-main}
+
+# REST API URL (replace with your actual API endpoint)
+API_URL=${2:-"https://bicycledata.ochel.se:80"}"/api"
 
 # Fetch the latest changes from the remote repository
 if ! git fetch origin; then
@@ -36,9 +44,6 @@ fi
 
 #
 # Update the config file
-
-# REST API URL (replace with your actual API endpoint)
-API_URL="https://bicycledata.ochel.se:80/api"
 
 # Check if the .bicycledata file exists
 if [ ! -f .bicycledata ]; then
