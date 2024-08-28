@@ -36,7 +36,7 @@ if [ "$LOCAL_COMMIT" != "$REMOTE_COMMIT" ]; then
     fi
     # Execute the script after updating
     echo "Executing the updated script..."
-    exec "$SCRIPT_DIR/bicycleinit.sh"
+    exec "$SCRIPT_DIR/bicycleinit.sh" $BRANCH $API_URL
     exit $?
 else
     echo "No updates available. The repository is up to date."
