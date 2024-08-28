@@ -37,8 +37,6 @@ assumes that it is located inside a Git repository with the `origin`
 remote set to
 [`https://github.com/bicycledata/bicycleinit.git`](https://github.com/bicycledata/bicycleinit.git).
 
-To clone the repository, use the following command:
-
 ## Usage
 
 The `bicycleinit.sh` script accepts two optional arguments:
