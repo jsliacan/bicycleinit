@@ -31,6 +31,10 @@ sudo apt-get install git jq curl
 
 ## Usage
 
+Prior to running `bicycleinit.sh`, make sure you clone this repository
+and do it from there -- the script assumes that it is located inside a git
+repository with this [`origin remote`](https://github.com/bicycledata/bicycleinit.git).
+
 The `bicycleinit.sh` script accepts two optional arguments:
 
 1. **Branch name**: The Git branch to check for updates. Defaults to
