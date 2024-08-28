@@ -29,6 +29,14 @@ sudo apt-get update
 sudo apt-get install git jq curl
 ```
 
+## Clone the Repository
+
+Prior to running `bicycleinit.sh`, make sure you clone this repository
+and run the script from within the cloned directory. The script
+assumes that it is located inside a Git repository with the `origin`
+remote set to
+[`https://github.com/bicycledata/bicycleinit.git`](https://github.com/bicycledata/bicycleinit.git).
+
 ## Usage
 
 The `bicycleinit.sh` script accepts two optional arguments:
@@ -46,7 +54,8 @@ To run the script with default parameters, use:
 ./bicycleinit.sh
 ```
 
-To specify a different branch or API URL, you can pass them as arguments:
+To specify a different branch or API URL, you can pass them as
+arguments:
 
 ```bash
 ./bicycleinit.sh [branch_name] [server_rest_api_url]
@@ -58,8 +67,10 @@ To specify a different branch or API URL, you can pass them as arguments:
 ./bicycleinit.sh develop 127.0.0.1:5000
 ```
 
-This command will check for updates on the `develop` branch and use the specified REST API URL.
+This command will check for updates on the `develop` branch and use
+the specified REST API URL.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the
+[LICENSE](LICENSE) file for details.
