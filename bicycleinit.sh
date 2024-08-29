@@ -72,6 +72,15 @@ EOF
 
     # Send the registration request to the REST API
     RESPONSE=$(curl -s -X POST -H "Content-Type: application/json" -d "$PAYLOAD" "$API_URL/register")
+    CURL_EXIT_CODE=$?
+
+    # Check if curl succeeded
+    if [ $CURL_EXIT_CODE -ne 0 ]; then
+        echo "Curl failed with exit code $CURL_EXIT_CODE. Registration failed." | tee -a bicycleinit.log
+        echo "Offline mode enabled." | tee -a bicycleinit.log
+        exec "$SCRIPT_DIR/bicyclelaunch.sh"
+        exit $?
+    fi
 
     # Validate the response using jq and ensure it contains the hash
     if echo "$RESPONSE" | jq -e '.hash' > /dev/null 2>&1; then
@@ -92,6 +101,15 @@ if [ -f .bicycledata ]; then
 
     # Send the hash to the API to get the config.json file
     CONFIG_RESPONSE=$(curl -s -X GET "$API_URL/config?hash=$HASH")
+    CURL_EXIT_CODE=$?
+
+    # Check if curl succeeded
+    if [ $CURL_EXIT_CODE -ne 0 ]; then
+        echo "Curl failed with exit code $CURL_EXIT_CODE. Failed to retrieve config." | tee -a bicycleinit.log
+        echo "Offline mode enabled." | tee -a bicycleinit.log
+        exec "$SCRIPT_DIR/bicyclelaunch.sh"
+        exit $?
+    fi
 
     # Validate the config response
     if echo "$CONFIG_RESPONSE" | jq -e '.config' > /dev/null 2>&1; then
