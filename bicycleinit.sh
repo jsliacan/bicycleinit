@@ -25,13 +25,16 @@ echo "$SCRIPT_DIR/bicycleinit.sh $BRANCH $API_URL" | tee -a bicycleinit.log
 # Fetch the latest changes from the remote repository
 if ! git fetch origin; then
     echo "Failed to fetch updates. Offline mode enabled." | tee -a bicycleinit.log
-    exec "bicyclelaunch.sh"
+    exec "$SCRIPT_DIR/bicyclelaunch.sh"
     exit $?
 fi
 
 # Check if the local branch is behind the remote branch
 LOCAL_COMMIT=$(git rev-parse HEAD)
 REMOTE_COMMIT=$(git rev-parse origin/$BRANCH)
+
+echo "local commit  $LOCAL_COMMIT" | tee -a bicycleinit.log
+echo "remote commit $REMOTE_COMMIT" | tee -a bicycleinit.log
 
 if [ "$LOCAL_COMMIT" != "$REMOTE_COMMIT" ]; then
     echo "Updates available. Pulling latest changes..."
