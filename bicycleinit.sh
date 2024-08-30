@@ -22,10 +22,31 @@ echo "" >> bicycleinit.log
 date >> bicycleinit.log
 echo "$SCRIPT_DIR/bicycleinit.sh $BRANCH $API_URL" | tee -a bicycleinit.log
 
+# Name of the virtual environment directory
+VENV_DIR=".env"
+
+# Check if the virtual environment directory exists
+if [ -d "$VENV_DIR" ]; then
+    echo "Virtual environment already exists." | tee -a bicycleinit.log
+else
+    echo "Virtual environment not found. Setting it up..." | tee -a bicycleinit.log
+    # Create the virtual environment
+    python3 -m venv $VENV_DIR
+
+    # Check if venv creation was successful
+    if [ -d "$VENV_DIR" ]; then
+        echo "Virtual environment successfully created." | tee -a bicycleinit.log
+    else
+        echo "Failed to create the virtual environment." | tee -a bicycleinit.log
+        echo "Exit" | tee -a bicycleinit.log
+        exit 1
+    fi
+fi
+
 # Fetch the latest changes from the remote repository
 if ! git fetch origin; then
     echo "Failed to fetch updates. Offline mode enabled." | tee -a bicycleinit.log
-    exec "$SCRIPT_DIR/bicyclelaunch.sh"
+    exec "$VENV_DIR/bin/python3" bicyclelaunch.py
     exit $?
 fi
 
@@ -41,7 +62,7 @@ if [ "$LOCAL_COMMIT" != "$REMOTE_COMMIT" ]; then
     if ! git pull origin "$BRANCH"; then
         echo "Failed to pull updates. Resolve conflicts and retry." | tee -a bicycleinit.log
         echo "Offline mode enabled." | tee -a bicycleinit.log
-        exec "$SCRIPT_DIR/bicyclelaunch.sh"
+        exec "$VENV_DIR/bin/python3" bicyclelaunch.py
         exit $?
     fi
     # Execute the script after updating
@@ -81,7 +102,7 @@ EOF
     if [ $CURL_EXIT_CODE -ne 0 ]; then
         echo "Curl failed with exit code $CURL_EXIT_CODE. Registration failed." | tee -a bicycleinit.log
         echo "Offline mode enabled." | tee -a bicycleinit.log
-        exec "$SCRIPT_DIR/bicyclelaunch.sh"
+        exec "$VENV_DIR/bin/python3" bicyclelaunch.py
         exit $?
     fi
 
@@ -91,6 +112,7 @@ EOF
         echo "$RESPONSE" > .bicycledata
     else
         echo "Registration failed. Response was: $RESPONSE" | tee -a bicycleinit.log
+        echo "Exit" | tee -a bicycleinit.log
         exit 1
     fi
 fi
@@ -110,7 +132,7 @@ if [ -f .bicycledata ]; then
     if [ $CURL_EXIT_CODE -ne 0 ]; then
         echo "Curl failed with exit code $CURL_EXIT_CODE. Failed to retrieve config." | tee -a bicycleinit.log
         echo "Offline mode enabled." | tee -a bicycleinit.log
-        exec "$SCRIPT_DIR/bicyclelaunch.sh"
+        exec "$VENV_DIR/bin/python3" bicyclelaunch.py
         exit $?
     fi
 
@@ -120,12 +142,14 @@ if [ -f .bicycledata ]; then
         echo "$CONFIG_RESPONSE" > config.json
     else
         echo "Failed to retrieve config.json. Response was: $CONFIG_RESPONSE" | tee -a bicycleinit.log
+        echo "Exit" | tee -a bicycleinit.log
         exit 1
     fi
 else
     echo "Error: .bicycledata file not found or failed to register." | tee -a bicycleinit.log
+    echo "Exit" | tee -a bicycleinit.log
     exit 1
 fi
 
-exec "$SCRIPT_DIR/bicyclelaunch.sh"
+exec "$VENV_DIR/bin/python3" bicyclelaunch.py
 exit $?

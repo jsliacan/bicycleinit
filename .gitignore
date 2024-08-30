@@ -1,3 +1,4 @@
 /.bicycledata
-/config.json
+/.env/
 /*.log
+/config.json
