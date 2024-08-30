@@ -137,7 +137,7 @@ if [ -f .bicycledata ]; then
     fi
 
     # Validate the config response
-    if echo "$CONFIG_RESPONSE" | jq -e 'error' > /dev/null 2>&1; then
+    if echo "$CONFIG_RESPONSE" | jq -e '.error' > /dev/null 2>&1; then
         echo "Failed to retrieve config.json. Response was: $CONFIG_RESPONSE" | tee -a bicycleinit.log
         echo "Exit" | tee -a bicycleinit.log
         exit 1
