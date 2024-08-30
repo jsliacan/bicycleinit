@@ -32,7 +32,7 @@ else
     echo "Virtual environment not found. Setting it up..." | tee -a bicycleinit.log
     # Create the virtual environment
     python3 -m venv $VENV_DIR
-
+    $VENV_DIR/bin/pip3 install -r requirements.txt
     # Check if venv creation was successful
     if [ -d "$VENV_DIR" ]; then
         echo "Virtual environment successfully created." | tee -a bicycleinit.log

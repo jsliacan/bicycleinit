@@ -1,24 +1,25 @@
 import os
+import logging
+import lidar
+
 from datetime import datetime
 
-# Log file name
 log_file = "bicycleinit.log"
-
-# Function to append data to the log file
-def append_to_log(data):
-    print(data)
-    with open(log_file, "a") as f:
-        f.write(data + "\n")
+log_level = logging.DEBUG
+date_format = '%Y-%m-%d %H:%M:%S'
+logging.basicConfig(filename=log_file, encoding='utf-8', level=log_level, format='%(asctime)s %(message)s', datefmt=date_format) 
+log = logging.getLogger(__name__)
 
 # Add a blank line to the log file
-append_to_log("")
-
-# Add the current date and time to the log file
-current_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-append_to_log(current_datetime)
+log.info("*"*10 + " Started " + "*"*10)
 
 # Add the script name to the log file
-script_name = os.path.abspath(__file__)
-append_to_log(script_name)
+log.info("Running " + str(os.path.abspath(__file__)))
 
-# TODO: Launch all the sensors
+log.info("Running " + str(os.path.abspath("lidar.py")))
+
+# stream lidar data to stdout
+lidar.streamLidar(5, log, "lidar.csv")
+
+# close log
+log.info("*"*10 + " Finished " + "*"*10)
