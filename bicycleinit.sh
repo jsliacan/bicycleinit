@@ -134,16 +134,9 @@ if [ -f .bicycledata ]; then
         echo "Offline mode enabled." | tee -a bicycleinit.log
         exec "$VENV_DIR/bin/python3" bicyclelaunch.py
         exit $?
-    fi
-
-    # Validate the config response
-    if echo "$CONFIG_RESPONSE" | jq -e '.config' > /dev/null 2>&1; then
+    else
         echo "Config received. Saving config.json." | tee -a bicycleinit.log
         echo "$CONFIG_RESPONSE" > config.json
-    else
-        echo "Failed to retrieve config.json. Response was: $CONFIG_RESPONSE" | tee -a bicycleinit.log
-        echo "Exit" | tee -a bicycleinit.log
-        exit 1
     fi
 else
     echo "Error: .bicycledata file not found or failed to register." | tee -a bicycleinit.log
