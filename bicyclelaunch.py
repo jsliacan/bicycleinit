@@ -6,7 +6,6 @@ log_file = "bicycleinit.log"
 
 # Function to append data to the log file
 def append_to_log(data):
-    print(data)
     with open(log_file, "a") as f:
         f.write(data + "\n")
 
