@@ -137,13 +137,13 @@ if [ -f .bicycledata ]; then
     fi
 
     # Validate the config response
-    if echo "$CONFIG_RESPONSE" | jq -e '.config' > /dev/null 2>&1; then
-        echo "Config received. Saving config.json." | tee -a bicycleinit.log
-        echo "$CONFIG_RESPONSE" > config.json
-    else
+    if echo "$CONFIG_RESPONSE" | jq -e 'error' > /dev/null 2>&1; then
         echo "Failed to retrieve config.json. Response was: $CONFIG_RESPONSE" | tee -a bicycleinit.log
         echo "Exit" | tee -a bicycleinit.log
         exit 1
+    else
+        echo "Config received. Saving config.json." | tee -a bicycleinit.log
+        echo "$CONFIG_RESPONSE" > config.json
     fi
 else
     echo "Error: .bicycledata file not found or failed to register." | tee -a bicycleinit.log
