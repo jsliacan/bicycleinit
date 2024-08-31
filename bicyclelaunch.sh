@@ -31,10 +31,10 @@ jq -c '.sensors[]' "$CONFIG_FILE" | while read sensor; do
 
     # Clone the repository if it doesn't exist, otherwise pull the latest version
     if [ ! -d "$SENSOR_PATH" ]; then
-        echo "Cloning $NAME..."
+        echo "Cloning $NAME..." | tee -a bicycleinit.log
         git clone "$GIT_URL" "$SENSOR_PATH"
     else
-        echo "Updating $NAME..."
+        echo "Updating $NAME..." | tee -a bicycleinit.log
         git -C "$SENSOR_PATH" fetch origin
     fi
 
@@ -43,24 +43,24 @@ jq -c '.sensors[]' "$CONFIG_FILE" | while read sensor; do
     # Determine if the version is a branch, tag, or commit hash
     if git -C "$SENSOR_PATH" rev-parse --verify "$GIT_VERSION" &>/dev/null; then
         # If it's a valid hash, checkout the commit directly
-        echo "Checking out commit $GIT_VERSION for $NAME..."
+        echo "Checking out commit $GIT_VERSION for $NAME..." | tee -a bicycleinit.log
         git -C "$SENSOR_PATH" checkout "$GIT_VERSION"
     elif git -C "$SENSOR_PATH" rev-parse --verify "origin/$GIT_VERSION" &>/dev/null; then
         # If it's a branch, checkout the branch
-        echo "Checking out branch $GIT_VERSION for $NAME..."
+        echo "Checking out branch $GIT_VERSION for $NAME..." | tee -a bicycleinit.log
         git -C "$SENSOR_PATH" checkout "$GIT_VERSION"
         git -C "$SENSOR_PATH" pull origin "$GIT_VERSION"
     elif git -C "$SENSOR_PATH" rev-parse --verify "refs/tags/$GIT_VERSION" &>/dev/null; then
         # If it's a tag, checkout the tag
-        echo "Checking out tag $GIT_VERSION for $NAME..."
+        echo "Checking out tag $GIT_VERSION for $NAME..." | tee -a bicycleinit.log
         git -C "$SENSOR_PATH" checkout "tags/$GIT_VERSION"
     else
-        echo "Error: $GIT_VERSION is not a valid branch, tag, or commit hash for $NAME."
+        echo "Error: $GIT_VERSION is not a valid branch, tag, or commit hash for $NAME." | tee -a bicycleinit.log
         continue
     fi
 
     # Launch the sensor in the background
-    echo "Launching $NAME: $ENTRY_POINT --name $NAME --hash $HASH $ARGS"
+    echo "Launching $NAME: $ENTRY_POINT --name $NAME --hash $HASH $ARGS" | tee -a bicycleinit.log
     (cd "$SENSOR_PATH" && "../../$VENV_DIR/bin/python3" $ENTRY_POINT --name $NAME --hash $HASH $ARGS) &
 done
 
