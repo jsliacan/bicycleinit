@@ -22,6 +22,14 @@ echo "" >> bicycleinit.log
 date >> bicycleinit.log
 echo "$SCRIPT_DIR/bicycleinit.sh $BRANCH $API_URL" | tee -a bicycleinit.log
 
+# Ensure jq is installed (for parsing JSON)
+if ! command -v jq &> /dev/null
+then
+    echo "jq could not be found. Please install jq (sudo apt install jq)." | tee -a bicycleinit.log
+    echo "Exit" | tee -a bicycleinit.log
+    exit 1
+fi
+
 # Name of the virtual environment directory
 VENV_DIR=".env"
 
