@@ -54,7 +54,7 @@ fi
 # Fetch the latest changes from the remote repository
 if ! git fetch origin; then
     echo "Failed to fetch updates. Offline mode enabled." | tee -a bicycleinit.log
-    exec "$VENV_DIR/bin/python3" bicyclelaunch.py
+    exec "$SCRIPT_DIR/bicyclelaunch.sh"
     exit $?
 fi
 
@@ -70,7 +70,7 @@ if [ "$LOCAL_COMMIT" != "$REMOTE_COMMIT" ]; then
     if ! git pull origin "$BRANCH"; then
         echo "Failed to pull updates. Resolve conflicts and retry." | tee -a bicycleinit.log
         echo "Offline mode enabled." | tee -a bicycleinit.log
-        exec "$VENV_DIR/bin/python3" bicyclelaunch.py
+        exec "$SCRIPT_DIR/bicyclelaunch.sh"
         exit $?
     fi
     # Execute the script after updating
@@ -110,7 +110,7 @@ EOF
     if [ $CURL_EXIT_CODE -ne 0 ]; then
         echo "Curl failed with exit code $CURL_EXIT_CODE. Registration failed." | tee -a bicycleinit.log
         echo "Offline mode enabled." | tee -a bicycleinit.log
-        exec "$VENV_DIR/bin/python3" bicyclelaunch.py
+        exec "$SCRIPT_DIR/bicyclelaunch.sh"
         exit $?
     fi
 
@@ -140,7 +140,7 @@ if [ -f .bicycledata ]; then
     if [ $CURL_EXIT_CODE -ne 0 ]; then
         echo "Curl failed with exit code $CURL_EXIT_CODE. Failed to retrieve config." | tee -a bicycleinit.log
         echo "Offline mode enabled." | tee -a bicycleinit.log
-        exec "$VENV_DIR/bin/python3" bicyclelaunch.py
+        exec "$SCRIPT_DIR/bicyclelaunch.sh"
         exit $?
     fi
 
@@ -159,5 +159,5 @@ else
     exit 1
 fi
 
-exec "$VENV_DIR/bin/python3" bicyclelaunch.py
+exec "$SCRIPT_DIR/bicyclelaunch.sh"
 exit $?
