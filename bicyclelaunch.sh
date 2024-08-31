@@ -14,6 +14,9 @@ VENV_DIR=".env"
 SENSOR_DIR="sensors"
 mkdir -p "$SENSOR_DIR"
 
+# Extract the hash from the .bicycledata file
+HASH=$(jq -r '.hash' < .bicycledata)
+
 # Iterate through each sensor entry in the config file
 jq -c '.sensors[]' "$CONFIG_FILE" | while read sensor; do
     # Extract sensor details using jq
@@ -57,8 +60,8 @@ jq -c '.sensors[]' "$CONFIG_FILE" | while read sensor; do
     fi
 
     # Launch the sensor in the background
-    echo "Launching $NAME: $ENTRY_POINT $ARGS"
-    (cd "$SENSOR_PATH" && "../../$VENV_DIR/bin/python3" $ENTRY_POINT $ARGS) &
+    echo "Launching $NAME: $ENTRY_POINT --name $NAME --hash $HASH $ARGS"
+    (cd "$SENSOR_PATH" && "../../$VENV_DIR/bin/python3" $ENTRY_POINT --name $NAME --hash $HASH $ARGS) &
 done
 
 # Wait for all background processes to finish

@@ -30,6 +30,19 @@ then
     exit 1
 fi
 
+# Check if server is available
+RESPONSE=$(curl -s -X GET "$API_URL/time")
+CURL_EXIT_CODE=$?
+
+# Check if curl succeeded
+if [ $CURL_EXIT_CODE -ne 0 ]; then
+    echo "Server not available. Offline mode enabled." | tee -a bicycleinit.log
+    exec "$SCRIPT_DIR/bicyclelaunch.sh"
+    exit $?
+else
+    echo "Server time: $RESPONSE" | tee -a bicycleinit.log
+fi
+
 # Name of the virtual environment directory
 VENV_DIR=".env"
 
