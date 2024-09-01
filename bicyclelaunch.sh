@@ -17,19 +17,6 @@ mkdir -p "$SENSOR_DIR"
 # Extract the hash from the .bicycledata file
 HASH=$(jq -r '.hash' < .bicycledata)
 
-# Iterate through each sensor entry and install requirements
-jq -c '.sensors[]' "$CONFIG_FILE" | while read sensor; do
-    NAME=$(echo "$sensor" | jq -r '.name')
-
-    # Define the sensor directory
-    SENSOR_PATH="$SENSOR_DIR/$NAME"
-
-    # Launch the sensor in the background
-    if [ -f "$SENSOR_PATH/requirements.txt" ]; then
-        exec $VENV_DIR/bin/pip3 install -r "$SENSOR_PATH/requirements.txt" | tee -a bicycleinit.log
-    fi
-done
-
 # Iterate through each sensor entry in the config file
 jq -c '.sensors[]' "$CONFIG_FILE" | while read sensor; do
     # Extract sensor details using jq
@@ -45,31 +32,37 @@ jq -c '.sensors[]' "$CONFIG_FILE" | while read sensor; do
     # Clone the repository if it doesn't exist, otherwise pull the latest version
     if [ ! -d "$SENSOR_PATH" ]; then
         echo "Cloning $NAME..." | tee -a bicycleinit.log
-        git clone "$GIT_URL" "$SENSOR_PATH"
+        if ! git clone "$GIT_URL" "$SENSOR_PATH"; then
+            echo "Failed to clone $NAME." | tee -a bicycleinit.log
+            continue
+        fi
     else
         echo "Updating $NAME..." | tee -a bicycleinit.log
         git -C "$SENSOR_PATH" fetch origin
     fi
 
     # Checkout the specified version (branch, tag, or commit hash)
-
-    # Determine if the version is a branch, tag, or commit hash
     if git -C "$SENSOR_PATH" rev-parse --verify "$GIT_VERSION" &>/dev/null; then
-        # If it's a valid hash, checkout the commit directly
         echo "Checking out commit $GIT_VERSION for $NAME..." | tee -a bicycleinit.log
         git -C "$SENSOR_PATH" checkout "$GIT_VERSION"
     elif git -C "$SENSOR_PATH" rev-parse --verify "origin/$GIT_VERSION" &>/dev/null; then
-        # If it's a branch, checkout the branch
         echo "Checking out branch $GIT_VERSION for $NAME..." | tee -a bicycleinit.log
         git -C "$SENSOR_PATH" checkout "$GIT_VERSION"
         git -C "$SENSOR_PATH" pull origin "$GIT_VERSION"
     elif git -C "$SENSOR_PATH" rev-parse --verify "refs/tags/$GIT_VERSION" &>/dev/null; then
-        # If it's a tag, checkout the tag
         echo "Checking out tag $GIT_VERSION for $NAME..." | tee -a bicycleinit.log
         git -C "$SENSOR_PATH" checkout "tags/$GIT_VERSION"
     else
         echo "Error: $GIT_VERSION is not a valid branch, tag, or commit hash for $NAME." | tee -a bicycleinit.log
         continue
+    fi
+
+    if [ -f "$SENSOR_PATH/requirements.txt" ]; then
+        "$VENV_DIR/bin/pip3" install -q -r "$SENSOR_PATH/requirements.txt" | tee -a bicycleinit.log
+        if [ $? -ne 0 ]; then
+            echo "Failed to install requirements for $NAME." | tee -a bicycleinit.log
+            continue
+        fi
     fi
 
     # Launch the sensor in the background
