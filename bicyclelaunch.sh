@@ -17,6 +17,19 @@ mkdir -p "$SENSOR_DIR"
 # Extract the hash from the .bicycledata file
 HASH=$(jq -r '.hash' < .bicycledata)
 
+# Iterate through each sensor entry and install requirements
+jq -c '.sensors[]' "$CONFIG_FILE" | while read sensor; do
+    NAME=$(echo "$sensor" | jq -r '.name')
+
+    # Define the sensor directory
+    SENSOR_PATH="$SENSOR_DIR/$NAME"
+
+    # Launch the sensor in the background
+    if [ -f "$SENSOR_PATH/requirements.txt" ]; then
+        exec $VENV_DIR/bin/pip3 install -r "$SENSOR_PATH/requirements.txt" | tee -a bicycleinit.log
+    fi
+done
+
 # Iterate through each sensor entry in the config file
 jq -c '.sensors[]' "$CONFIG_FILE" | while read sensor; do
     # Extract sensor details using jq
