@@ -18,7 +18,7 @@ mkdir -p "$SENSOR_DIR"
 HASH=$(jq -r '.hash' < .bicycledata)
 
 # Iterate through each sensor entry in the config file
-jq -c '.sensors[]' "$CONFIG_FILE" | while read sensor; do
+jq -c '.sensors[]? | .sensors[]' "$CONFIG_FILE" | while read sensor; do
     # Extract sensor details using jq
     NAME=$(echo "$sensor" | jq -r '.name')
     GIT_URL=$(echo "$sensor" | jq -r '.git_url')
