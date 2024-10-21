@@ -18,7 +18,7 @@ cd "$SCRIPT_DIR"
 BRANCH=${1:-main}
 
 # REST API URL
-API_URL=${2:-"https://bicycledata.ochel.se:80"}"/api"
+API_URL=${2:-"https://bicycledata.ochel.se:80/api"}
 
 echo "" >> bicycleinit.log
 date >> bicycleinit.log
