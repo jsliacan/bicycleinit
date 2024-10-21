@@ -45,6 +45,13 @@ else
     echo "Server time: $RESPONSE" | tee -a bicycleinit.log
 fi
 
+# Check if we force to run in offline mode
+if [ -f .offline ]; then
+    echo "Forced offline mode" | tee -a bicycleinit.log
+    exec "$SCRIPT_DIR/bicyclelaunch.sh"
+    exit $?
+fi
+
 # Name of the virtual environment directory
 VENV_DIR=".env"
 
