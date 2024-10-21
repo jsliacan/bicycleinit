@@ -17,7 +17,7 @@ cd "$SCRIPT_DIR"
 # Define the branch to check for updates (default to main)
 BRANCH=${1:-main}
 
-# REST API URL (replace with your actual API endpoint)
+# REST API URL
 API_URL=${2:-"https://bicycledata.ochel.se:80"}"/api"
 
 echo "" >> bicycleinit.log
