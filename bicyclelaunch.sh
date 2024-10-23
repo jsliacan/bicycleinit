@@ -42,18 +42,8 @@ jq -c '.sensors[]' "$CONFIG_FILE" | while read sensor; do
     fi
 
     # Checkout the specified version (branch, tag, or commit hash)
-    if git -C "$SENSOR_PATH" rev-parse --verify "$GIT_VERSION" &>/dev/null; then
-        echo "Checking out commit $GIT_VERSION for $NAME..." | tee -a bicycleinit.log
-        if ! git -C "$SENSOR_PATH" checkout "$GIT_VERSION"; then
-            echo "Error: Failed to checkout commit $GIT_VERSION for $NAME." | tee -a bicycleinit.log
-            continue
-        fi
-    elif git -C "$SENSOR_PATH" rev-parse --verify "origin/$GIT_VERSION" &>/dev/null; then
+    if git -C "$SENSOR_PATH" rev-parse --verify "origin/$GIT_VERSION" &>/dev/null; then
         echo "Checking out branch $GIT_VERSION for $NAME..." | tee -a bicycleinit.log
-        if ! git -C "$SENSOR_PATH" checkout "origin/$GIT_VERSION"; then
-            echo "Error: Failed to checkout branch $GIT_VERSION for $NAME." | tee -a bicycleinit.log
-            continue
-        fi
         if ! git -C "$SENSOR_PATH" pull origin "$GIT_VERSION"; then
             echo "Error: Failed to pull latest changes for branch $GIT_VERSION for $NAME." | tee -a bicycleinit.log
             continue
@@ -62,6 +52,12 @@ jq -c '.sensors[]' "$CONFIG_FILE" | while read sensor; do
         echo "Checking out tag $GIT_VERSION for $NAME..." | tee -a bicycleinit.log
         if ! git -C "$SENSOR_PATH" checkout "refs/tags/$GIT_VERSION"; then
             echo "Error: Failed to checkout tag $GIT_VERSION for $NAME." | tee -a bicycleinit.log
+            continue
+        fi
+    elif git -C "$SENSOR_PATH" rev-parse --verify "$GIT_VERSION" &>/dev/null; then
+        echo "Checking out commit $GIT_VERSION for $NAME..." | tee -a bicycleinit.log
+        if ! git -C "$SENSOR_PATH" checkout "$GIT_VERSION"; then
+            echo "Error: Failed to checkout commit $GIT_VERSION for $NAME." | tee -a bicycleinit.log
             continue
         fi
     else
