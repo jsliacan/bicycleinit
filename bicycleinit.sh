@@ -3,7 +3,7 @@
 # 1. Branch name (optional): The Git branch to check for updates.
 #    Defaults to 'main'.
 # 2. Server REST API URL (optional): The base URL for the server's
-#    REST API. Defaults to 'https://bicycledata.ochel.se:80'.
+#    REST API. Defaults to 'https://bicycledata.vti.se'.
 
 #
 # Update this script - bicycleinit.sh
@@ -18,7 +18,7 @@ cd "$SCRIPT_DIR"
 BRANCH=${1:-main}
 
 # REST API URL
-API_URL=${2:-"https://bicycledata.ochel.se:80/api"}
+API_URL=${2:-"https://bicycledata.vti.se/api"}
 
 echo "" >> bicycleinit.log
 date >> bicycleinit.log

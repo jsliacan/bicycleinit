@@ -44,7 +44,7 @@ The `bicycleinit.sh` script accepts two optional arguments:
 1. **Branch name**: The Git branch to check for updates. Defaults to
    `'main'`.
 2. **Server REST API URL**: The base URL for the server's REST API.
-   Defaults to `'https://bicycledata.ochel.se:80/api'`.
+   Defaults to `'https://bicycledata.vti.se/api'`.
 
 ### Running the Script
 
